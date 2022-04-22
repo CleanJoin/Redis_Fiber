@@ -14,15 +14,18 @@ var (
 )
 
 func main() {
-	//value := internal.ConnectRedis()
+
 	database, err := internal.NewDatabase(RedisAddr)
 	if err != nil {
 		log.Fatalf("Failed to connect to redis: %s", err.Error())
 	}
 
-	hackers, _ := database.GetLeaderboard()
+	hackers, err := database.GetHackers()
+
+	if err != nil {
+		log.Fatalf("%v", err)
+	}
 	app := fiber.New()
-	//dd := fmt.Sprintf("%+v", hackers.Users)
 	app.Get("/json/hackers", func(c *fiber.Ctx) error {
 		return c.JSON(hackers.Users)
 	})
