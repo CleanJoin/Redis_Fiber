@@ -1,13 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 
 	"redisFiber/internal"
 
 	"github.com/gofiber/fiber/v2"
-	"gitlab.com/idoko/rediboard/db"
 )
 
 var (
@@ -16,17 +14,17 @@ var (
 )
 
 func main() {
-	value := internal.ConnectRedis()
-	database, err := db.NewDatabase(RedisAddr)
+	//value := internal.ConnectRedis()
+	database, err := internal.NewDatabase(RedisAddr)
 	if err != nil {
 		log.Fatalf("Failed to connect to redis: %s", err.Error())
 	}
 
-	database.GetLeaderboard()
+	hackers, _ := database.GetLeaderboard()
 	app := fiber.New()
-
+	//dd := fmt.Sprintf("%+v", hackers.Users)
 	app.Get("/json/hackers", func(c *fiber.Ctx) error {
-		return c.SendString(fmt.Sprintf("%v", value))
+		return c.JSON(hackers.Users)
 	})
 	log.Fatal(app.Listen(":8010"))
 
